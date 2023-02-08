@@ -84,6 +84,7 @@
     <Text Include="..\..\..\..\Desktop\AES_CTR_MODE_PARALLELISM\text.txt" />
     <Text Include="test.txt" />
     <Text Include="test2.txt" />
+    <Text Include="Text.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aes_cuda.cuh" />

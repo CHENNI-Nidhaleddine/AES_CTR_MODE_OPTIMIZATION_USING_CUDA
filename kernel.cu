@@ -9,8 +9,8 @@
 #include <stdint.h>
 
 
-#define NUM_BLOCKS 512
-#define NUM_THREADS 65536
+#define NUM_BLOCKS 1024
+#define NUM_THREADS 2048
 
 
 void print_hex(BYTE str[], int len)
@@ -56,8 +56,8 @@ int main(int argc, char* argv[])
     start = clock();
     char* text;
 
-    char* fileToEncrypt = "image2.png";
-    char* newFile = "hmm.png";
+    char* fileToEncrypt = "archive.zip";
+    char* newFile = "sarra.zip";
 
     long long numbytes = read_file(fileToEncrypt, &text);
 
@@ -97,14 +97,18 @@ int main(int argc, char* argv[])
     cudaMalloc(&ctrs2, (numbytes / AES_BLOCK_SIZE + 1) * 16 * sizeof(BYTE));
     cudaMemcpy(ctrs2, ctrs, (numbytes / AES_BLOCK_SIZE + 1) * 16 * sizeof(BYTE), cudaMemcpyHostToDevice);
 
+    BYTE* iv2;
+    cudaMalloc(&iv2,  16 * sizeof(BYTE));
+    cudaMemcpy(iv2, iv,  16 * sizeof(BYTE), cudaMemcpyHostToDevice);
 
-
-    aes_encrypt_ctr<<<NUM_BLOCKS,NUM_THREADS>>>(&plaintext2[0], numbytes, enc_buf2, key_schedule2, keysize, ctrs2);
+    aes_encrypt_ctr<<<NUM_BLOCKS,NUM_THREADS>>>(&plaintext2[0], numbytes, enc_buf2, key_schedule2, keysize, iv2);
 
     cudaMemcpy(enc_buf, enc_buf2, numbytes * sizeof(BYTE), cudaMemcpyDeviceToHost);
-    
+    printf("\n");
+    //for (int i = 0; i < numbytes; i++) printf("%x ", enc_buf[i]);
+    //return 0;
    
-    aes_encrypt_ctr << <NUM_BLOCKS, NUM_THREADS >> > (&enc_buf2[0], numbytes, plaintext2, key_schedule2, keysize, ctrs2);
+    aes_encrypt_ctr << <NUM_BLOCKS, NUM_THREADS >> > (&enc_buf2[0], numbytes, plaintext2, key_schedule2, keysize, iv2);
     cudaMemcpy(plaintext, plaintext2, numbytes * sizeof(BYTE), cudaMemcpyDeviceToHost);
 
     write_file(newFile, plaintext, numbytes);

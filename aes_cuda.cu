@@ -620,6 +620,16 @@ void increment_ctr(BYTE ctr[], int counter_size)
             break;
     }
 }
+__device__ void increment_ctr2(BYTE ctr[], int counter_size)
+{
+    int idx;
+    for (idx = AES_BLOCK_SIZE - 1; idx >= AES_BLOCK_SIZE - counter_size; idx--)
+    {
+        ctr[idx]++;
+        if (ctr[idx] != 0 || idx == AES_BLOCK_SIZE - counter_size)
+            break;
+    }
+}
 __global__ void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], const WORD key[], int keysize, const BYTE ctrs[])
 {
     int th_idx = blockDim.x * blockIdx.x + threadIdx.x;
@@ -627,19 +637,20 @@ __global__ void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], cons
     int totalBlocksParThread = 1,totalBlocksLastThread=1;
     int iterations;
     int num_blocks = in_len / AES_BLOCK_SIZE;
+    //printf("%d  %d llllllllllllllll\n",in_len, in_len / 16);
     if (in_len % AES_BLOCK_SIZE != 0) {
         num_blocks++;
     }
     if (num_blocks > numberOfGivenThreads) {
         totalBlocksParThread = num_blocks / numberOfGivenThreads;
-    
+        totalBlocksLastThread = totalBlocksParThread;
        if (num_blocks % numberOfGivenThreads != 0) {
             //totalblocksparthread = num_blocks - totalblocksparthread * numberofgiventhreads;
             totalBlocksLastThread = num_blocks - totalBlocksParThread* (numberOfGivenThreads-1);
         }
 
     }
-    
+    //printf("%ld------------\n", num_blocks);
     if (th_idx >= num_blocks) return;
 
     // the last thread will do totalBlocksParThread or totalBlocksParThread+1 iterations
@@ -648,13 +659,46 @@ __global__ void aes_encrypt_ctr(const BYTE in[], size_t in_len, BYTE out[], cons
 
     //CPU VARIABLES
     BYTE ctr_buf[AES_BLOCK_SIZE];
+    memcpy(ctr_buf, ctrs, AES_BLOCK_SIZE);
+    
+    for (int i = 0; i < th_idx * totalBlocksParThread; i++) {
+        increment_ctr2(ctr_buf, 16);
+    }
+    //printf("%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x\n", ctr_buf[0], ctr_buf[1], ctr_buf[2], ctr_buf[3],
+      //  ctr_buf[4], ctr_buf[5], ctr_buf[6], ctr_buf[7/*], ctr_buf[8], ctr_buf[9], ctr_buf[10], ctr_buf[11]
+  //  , ctr_buf[12], ctr_buf[13], ctr_buf[14], ctr_buf[15]);*/
+    //for (int i = 0; i < 16; i++) printf("%x ", ctr_buf[i]);
     BYTE out_buf[AES_BLOCK_SIZE];
     if (in != out)
         memcpy(out, in, in_len);
         for (int i = 0; i < iterations; i++) {
-            memcpy(ctr_buf, &ctrs[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE], AES_BLOCK_SIZE);
+        /*    printf("%x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x\n", ctr_buf[0], ctr_buf[1], ctr_buf[2], ctr_buf[3],
+                ctr_buf[4], ctr_buf[5], ctr_buf[6], ctr_buf[7], ctr_buf[8], ctr_buf[9], ctr_buf[10], ctr_buf[11]
+                , ctr_buf[12], ctr_buf[13], ctr_buf[14], ctr_buf[15]);
+          *///  memcpy(ctr_buf, &ctrs[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE], AES_BLOCK_SIZE);
             encrypt(ctr_buf, out_buf, key, keysize); //cryptage du ctr
             xor_buffer(out_buf, &out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE], AES_BLOCK_SIZE);
+       /*     printf("encoded %d %d : %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x\n",
+                th_idx,
+                i,
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE ],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+1],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+2],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+3],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+4],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+5],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+6],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+7],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+8],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+9],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+10],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+11],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+12],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+13],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE+14],
+                out[(th_idx * totalBlocksParThread + i) * AES_BLOCK_SIZE + 15]
+               );*/
+            increment_ctr2(ctr_buf,16);
         }
 }
 
