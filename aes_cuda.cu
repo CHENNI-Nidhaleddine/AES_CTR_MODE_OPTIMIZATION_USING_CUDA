@@ -608,14 +608,21 @@ __device__ void xor_buffer(const BYTE in[], BYTE out[], size_t len)
 }
 
 
-__device__ void increment_ctr(BYTE ctr[], int counter_size,int step)
+__device__ void increment_ctr(BYTE ctr[], int counter_size, int step)
 {
-    int idx;
-    for (idx = AES_BLOCK_SIZE - 1; idx >= AES_BLOCK_SIZE - counter_size; idx--)
+
+    int carry = step;
+    int i;
+    for (i = counter_size - 1; i >= 0; i--)
     {
-        ctr[idx]=+step;
-        if (ctr[idx] != 0 || idx == AES_BLOCK_SIZE - counter_size)
+        int tmp = ctr[i];
+        tmp += carry;
+        carry = tmp / 256;
+        ctr[i] = tmp % 256;
+        if (carry == 0)
+        {
             break;
+        }
     }
 }
 
