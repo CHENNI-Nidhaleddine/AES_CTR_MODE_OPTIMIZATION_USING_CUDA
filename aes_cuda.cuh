@@ -30,19 +30,12 @@ __device__ void decrypt(const BYTE in[],             // 16 bytes of ciphertext(t
 ///////////////////
 // AES - CTR
 ///////////////////
-void increment_ctr(BYTE ctr[],                  // Must be a multiple of AES_BLOCK_SIZE
-    int counter_size);          // Bytes of the IV used for counting (low end)
-
+__device__ void increment_ctr(BYTE ctr[],                  // Must be a multiple of AES_BLOCK_SIZE
+    int counter_size,         // Bytes of the IV used for counting (low end)
+    int step);                //Step of incrementation
 __global__ void aes_encrypt_ctr(const BYTE in[],         // Plaintext
     size_t in_len,           // Any byte length
     BYTE out[],              // Ciphertext, same length as plaintext
-    const WORD key[],        // From the key setup
-    int keysize,             // Bit length of the key, 128, 192, or 256
-    const BYTE ctr[]);        // IV, must be AES_BLOCK_SIZE bytes long
-
-void aes_decrypt_ctr(const BYTE in[],         // Ciphertext
-    size_t in_len,           // Any byte length
-    BYTE out[],              // Plaintext, same length as ciphertext
     const WORD key[],        // From the key setup
     int keysize,             // Bit length of the key, 128, 192, or 256
     const BYTE ctr[]);        // IV, must be AES_BLOCK_SIZE bytes long

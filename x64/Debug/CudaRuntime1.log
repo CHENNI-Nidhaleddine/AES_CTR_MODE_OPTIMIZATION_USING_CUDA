@@ -1,10 +1,19 @@
-﻿  Compiling CUDA source file aes_cuda.cu...
+﻿  Compiling CUDA source file kernel.cu...
   
-  C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc143.pdb /FS /Zi /RTC1 /MDd " -o C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\x64\Debug\aes_cuda.cu.obj "C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\aes_cuda.cu" 
-C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\aes_cuda.cu(51): warning #177-D: variable "invsbox_cpu" was declared but never referenced
+  C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\bin\HostX64\x64" -x cu   -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0\include"  -G   --keep-dir x64\Debug  -maxrregcount=0  --machine 64 --compile -cudart static  -g  -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /Fdx64\Debug\vc143.pdb /FS /Zi /RTC1 /MDd " -o C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\x64\Debug\kernel.cu.obj "C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\kernel.cu" 
+C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\kernel.cu(61): warning #2464-D: conversion from a string literal to "char *" is deprecated
   
   Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
   
-  aes_cuda.cu
-  tmpxft_00009f98_00000000-7_aes_cuda.cudafe1.cpp
+C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\kernel.cu(62): warning #2464-D: conversion from a string literal to "char *" is deprecated
+  
+C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\kernel.cu(61): warning #2464-D: conversion from a string literal to "char *" is deprecated
+  
+  Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+  
+C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\kernel.cu(62): warning #2464-D: conversion from a string literal to "char *" is deprecated
+  
+  kernel.cu
+  tmpxft_00004364_00000000-7_kernel.cudafe1.cpp
+C:\Users\aorus\source\repos\CudaRuntime1\CudaRuntime1\kernel.cu(45): warning C4244: 'return': conversion from '__int64' to 'int', possible loss of data
   CudaRuntime1.vcxproj -> C:\Users\aorus\source\repos\CudaRuntime1\x64\Debug\CudaRuntime1.exe
